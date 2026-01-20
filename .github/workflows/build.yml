@@ -24,7 +24,7 @@ jobs:
             output_name: ice-cream-machine-windows-x64.exe
 
           # macOS x86_64
-          - os: macos-13
+          - os: macos-12
             target: x86_64-apple-darwin
             output_name: ice-cream-machine-macos-x64
 
@@ -87,7 +87,7 @@ jobs:
     name: Create Release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
 
@@ -103,12 +103,25 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R artifacts
 
+      - name: Generate release tag
+        id: tag
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          else
+            echo "tag=build-$(date +'%Y%m%d-%H%M%S')-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.tag.outputs.tag }}
           files: artifacts/**/*
           draft: false
-          prerelease: false
+          prerelease: ${{ steps.tag.outputs.is_prerelease }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

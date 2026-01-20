@@ -68,13 +68,7 @@ jobs:
 
       - name: Compile for ${{ matrix.target }}
         working-directory: rp-2
-        run: |
-          deno compile \
-            --allow-read \
-            --allow-env \
-            --target ${{ matrix.target }} \
-            --output ../dist/${{ matrix.output_name }} \
-            main.ts
+        run: deno compile --allow-read --allow-env --target ${{ matrix.target }} --output ../dist/${{ matrix.output_name }} main.ts
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

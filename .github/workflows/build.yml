@@ -23,10 +23,10 @@ jobs:
             target: x86_64-pc-windows-msvc
             output_name: ice-cream-machine-windows-x64.exe
 
-          # macOS x86_64
-          - os: macos-12
-            target: x86_64-apple-darwin
-            output_name: ice-cream-machine-macos-x64
+          # macOS x86_64 (commented out - slow runner availability)
+          # - os: macos-12
+          #   target: x86_64-apple-darwin
+          #   output_name: ice-cream-machine-macos-x64
 
           # macOS ARM64
           - os: macos-latest
